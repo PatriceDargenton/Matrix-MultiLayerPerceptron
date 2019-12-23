@@ -7,18 +7,28 @@ Class MultiLayerPerceptron
 
     Public Shared rng As Random = New Random
 
+    ''' <summary>
+    ''' hidden x input weights matrix
+    ''' </summary>
     Public weights_ih As Matrix
 
+    ''' <summary>
+    ''' ouput x hidden weights matrix
+    ''' </summary>
     Public weights_ho As Matrix
 
     Public bias_h As Matrix
 
     Public bias_o As Matrix
 
+    Public output As Matrix ' To compute error
+
+    Public averageError!
+
     Private learningRate!
 
     ''' <summary>
-    ''' 
+    ''' Constructor
     ''' </summary>
     ''' <param name="inputNodes"></param>
     ''' <param name="hiddenNodes"></param>
@@ -31,12 +41,18 @@ Class MultiLayerPerceptron
         Me.weights_ho = New Matrix(outputNodes, hiddenNodes)
         Me.bias_h = New Matrix(hiddenNodes, 1)
         Me.bias_o = New Matrix(outputNodes, 1)
+        Me.learningRate = learningRate
+
+    End Sub
+
+    ''' <summary>
+    ''' Randomize weights.
+    ''' </summary>
+    Public Sub Randomize()
         Me.weights_ih.Randomize()
         Me.weights_ho.Randomize()
         Me.bias_h.Randomize()
         Me.bias_o.Randomize()
-        Me.learningRate = learningRate
-
     End Sub
 
     ''' <summary>
@@ -76,9 +92,10 @@ Class MultiLayerPerceptron
         Dim output = Matrix.Multiply(Me.weights_ho, hidden)
         output.Add(Me.bias_o)
         output.Map(fctLambdaSigmoid)
+        Me.output = output
 
-        Dim aR = output.ToArray
-        Return aR
+        Dim aSng = output.ToVectorArray
+        Return aSng
 
     End Function
 
@@ -98,12 +115,14 @@ Class MultiLayerPerceptron
         Dim outputs As Matrix = Matrix.Multiply(Me.weights_ho, hidden)
         outputs.Add(Me.bias_o)
         outputs.Map(lambdaFctSigmoid)
+        Me.output = outputs
 
         ' Convert array to matrix object
         Dim targets As Matrix = Matrix.FromArray(targets_array)
         ' Calculate the error
         ' ERROR = TARGETS - OUTPUTS
         Dim output_errors As Matrix = Matrix.Subtract(targets, outputs)
+        Me.averageError = Math.Abs(output_errors.Average)
         ' let gradient = outputs * (1 - outputs);
 
         Dim lambdaFctDSigmoid = Function(x!) dsigmoid(x)
@@ -135,6 +154,17 @@ Class MultiLayerPerceptron
         Me.weights_ih.Add(weight_ih_deltas)
         ' Adjust the bias by its deltas (which is just the gradients)
         Me.bias_h.Add(hidden_gradient)
+
+    End Sub
+
+    Public Sub ComputeError(targets_array!())
+
+        ' Convert array to matrix object
+        Dim targets As Matrix = Matrix.FromArray(targets_array)
+        ' Calculate the error
+        ' ERROR = TARGETS - OUTPUTS
+        Dim output_errors As Matrix = Matrix.Subtract(targets, Me.output)
+        Me.averageError = Math.Abs(output_errors.Average)
 
     End Sub
 

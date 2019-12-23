@@ -2,11 +2,12 @@
 ' From : https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
 
 Imports System.Text ' StringBuilder
+Imports System.Threading.Tasks ' Parallel.For (for previous Visual Studio)
 
 ''' <summary>
 ''' Contains matrix operations.
 ''' </summary>
-Class Matrix
+Partial Class Matrix
 
     ''' <summary>
     ''' Rows
@@ -80,12 +81,13 @@ Class Matrix
     End Function
 
     ''' <summary>
-    ''' Convert Matrix object to array.
+    ''' Convert the first vector of the Matrix to array.
     ''' </summary>
     ''' <returns>Returns an array.</returns>
-    Public Function ToArray() As Single()
+    Public Function ToVectorArray() As Single()
 
-        Dim array!() = New Single(Me.data.Length - 1) {}
+        'Dim array!() = New Single(Me.data.Length - 1) {}
+        Dim array!() = New Single(Me.data.GetLength(0) - 1) {}
 
         For i As Integer = 0 To array.Length - 1
             array(i) = Me.data(i, 0)
@@ -261,6 +263,31 @@ Class Matrix
         Next
 
         Return c
+
+    End Function
+
+    ''' <summary>
+    ''' Average value.
+    ''' </summary>
+    ''' <returns>Returns the average value.</returns>
+    Public Overloads Function Average!()
+
+        Dim nbElements% = Me.m_rows * Me.m_cols
+        Dim sum! = 0
+        For i As Integer = 0 To Me.m_rows - 1
+            For j As Integer = 0 To Me.m_cols - 1
+                sum += Me.data(i, j)
+            Next
+        Next
+
+        Dim rAverage! = 0
+        If nbElements <= 1 Then
+            rAverage = sum
+        Else
+            rAverage = sum / nbElements
+        End If
+
+        Return rAverage
 
     End Function
 
