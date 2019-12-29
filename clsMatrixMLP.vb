@@ -1,11 +1,17 @@
 ﻿
-' From : https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
+' From: https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
 
-Option Infer On ' Fct Lambda
+Option Infer On ' Lambda function
 
+''' <summary>
+''' Multi-Layer Perceptron
+''' </summary>
 Class MultiLayerPerceptron
 
-    Public Shared rng As Random = New Random
+    ''' <summary>
+    ''' Random generator
+    ''' </summary>
+    Public Shared rng As New Random
 
     ''' <summary>
     ''' hidden x input weights matrix
@@ -17,25 +23,50 @@ Class MultiLayerPerceptron
     ''' </summary>
     Public weights_ho As Matrix
 
+    ''' <summary>
+    ''' Hidden bias matrix
+    ''' </summary>
     Public bias_h As Matrix
 
+    ''' <summary>
+    ''' Output bias matrix
+    ''' </summary>
     Public bias_o As Matrix
 
-    Public output As Matrix ' To compute error
+    ''' <summary>
+    ''' Output matrix (returned to compute average error, and discrete error)
+    ''' </summary>
+    Public output As Matrix
 
+    ''' <summary>
+    ''' Average error of the output matrix
+    ''' </summary>
     Public averageError!
 
+    ''' <summary>
+    ''' Learning rate of the MLP
+    ''' </summary>
     Private learningRate!
+
+    ''' <summary>
+    ''' Activate function of each neuron of the MLP
+    ''' </summary>
+    Private activFct As ActivationFunctionForMatrix.IActivationFunctionForMatrix
+
+    ''' <summary>
+    ''' Lambda function for activate function
+    ''' </summary>
+    Private lambdaFct As Func(Of Single, Single)
+
+    ''' <summary>
+    ''' Lambda function for activate function derivate
+    ''' </summary>
+    Private lambdaFctD As Func(Of Single, Single)
 
     ''' <summary>
     ''' Constructor
     ''' </summary>
-    ''' <param name="inputNodes"></param>
-    ''' <param name="hiddenNodes"></param>
-    ''' <param name="outputNodes"></param>
     Public Sub New(inputNodes%, hiddenNodes%, outputNodes%, learningRate!)
-
-        MyBase.New()
 
         Me.weights_ih = New Matrix(hiddenNodes, inputNodes)
         Me.weights_ho = New Matrix(outputNodes, hiddenNodes)
@@ -43,135 +74,164 @@ Class MultiLayerPerceptron
         Me.bias_o = New Matrix(outputNodes, 1)
         Me.learningRate = learningRate
 
+        Dim lambdaFct = Function(x!) activFct.Activation(x, gain:=1, center:=0)
+        Dim lambdaFctD = Function(x!) activFct.Derivative(x, gain:=1)
+        SetLambdaActivationFunction(lambdaFct, lambdaFctD)
+
     End Sub
 
     ''' <summary>
-    ''' Randomize weights.
+    ''' Set specific activation function
     ''' </summary>
-    Public Sub Randomize()
-        Me.weights_ih.Randomize()
-        Me.weights_ho.Randomize()
-        Me.bias_h.Randomize()
-        Me.bias_o.Randomize()
+    Public Sub SetLambdaActivationFunction(
+        lambdaFct As Func(Of Single, Single),
+        lambdaFctD As Func(Of Single, Single))
+        Me.lambdaFct = lambdaFct
+        Me.lambdaFctD = lambdaFctD
     End Sub
 
     ''' <summary>
-    ''' Sigmoid activation function.
+    ''' Set registered activation function
     ''' </summary>
-    ''' <param name="x"></param>
-    ''' <returns></returns>
-    Private Function sigmoid!(x!)
-        Dim y# = 1 / (1 + Math.Exp(-x))
-        Dim ySng! = CSng(y)
-        'Dim ySng! = CType(y, Single)
-        Return ySng
-    End Function
+    Public Sub SetActivationFunction(fctAct As ActivationFunctionForMatrix.TActivationFunction)
+
+        Select Case fctAct
+            Case ActivationFunctionForMatrix.TActivationFunction.Sigmoid
+                Me.activFct = New ActivationFunctionForMatrix.SigmoidFunction
+            Case ActivationFunctionForMatrix.TActivationFunction.HyperbolicTangent
+                Me.activFct = New ActivationFunctionForMatrix.HyperbolicTangentFunction
+            Case ActivationFunctionForMatrix.TActivationFunction.ELU
+                Me.activFct = New ActivationFunctionForMatrix.ELUFunction
+            Case Else
+                Me.activFct = Nothing
+        End Select
+
+    End Sub
 
     ''' <summary>
-    ''' The derivative of sigmoid.
+    ''' Randomize weights
     ''' </summary>
-    ''' <param name="y"></param>
-    ''' <returns></returns>
-    Private Function dsigmoid!(y!)
-        Return y * (1 - y)
-    End Function
+    Public Sub Randomize(minValue!, maxValue!)
+        Me.weights_ih.Randomize(minValue, maxValue)
+        Me.weights_ho.Randomize(minValue, maxValue)
+        Me.bias_h.Randomize(minValue, maxValue)
+        Me.bias_o.Randomize(minValue, maxValue)
+    End Sub
 
+    ''' <summary>
+    ''' Propagate the input signal into the MLP
+    ''' </summary>
     Public Function FeedForward(inputs_array!()) As Single()
+
+        Return FeedForward_internal(inputs_array, Me.lambdaFct)
+
+    End Function
+
+    ''' <summary>
+    ''' Propagate the input signal into the MLP using actual activation function
+    ''' </summary>
+    Public Function FeedForward_internal(inputs_array!(),
+        lambdaFct As Func(Of Single, Single)) As Single()
 
         ' Generating the Hidden Outputs
         Dim inputs = Matrix.FromArray(inputs_array)
-        Dim hidden = Matrix.Multiply(Me.weights_ih, inputs)
-        hidden.Add(Me.bias_h)
-
-        Dim fctLambdaSigmoid = Function(x!) sigmoid(x)
-
-        ' activation function!
-        hidden.Map(fctLambdaSigmoid)
+        Dim hidden = Matrix.MultiplyAddAndMap(Me.weights_ih, inputs, Me.bias_h, lambdaFct)
 
         ' Generating the output's output!
-        Dim output = Matrix.Multiply(Me.weights_ho, hidden)
-        output.Add(Me.bias_o)
-        output.Map(fctLambdaSigmoid)
+        Dim output = Matrix.MultiplyAddAndMap(Me.weights_ho, hidden, Me.bias_o, lambdaFct)
         Me.output = output
 
-        Dim aSng = output.ToVectorArray
+        Dim aSng = output.ToVectorArray()
         Return aSng
 
     End Function
 
+    ''' <summary>
+    ''' Train MLP with one sample
+    ''' </summary>
     Public Sub Train(inputs_array!(), targets_array!())
 
-        ' Generating the Hidden Outputs
-        Dim inputs = Matrix.FromArray(inputs_array)
-        Dim hidden = Matrix.Multiply(Me.weights_ih, inputs)
-        hidden.Add(Me.bias_h)
-
-        Dim lambdaFctSigmoid = Function(x!) sigmoid(x)
-
-        ' activation function!
-        hidden.Map(lambdaFctSigmoid)
-
-        ' Generating the output's output!
-        Dim outputs As Matrix = Matrix.Multiply(Me.weights_ho, hidden)
-        outputs.Add(Me.bias_o)
-        outputs.Map(lambdaFctSigmoid)
-        Me.output = outputs
-
-        ' Convert array to matrix object
-        Dim targets As Matrix = Matrix.FromArray(targets_array)
-        ' Calculate the error
-        ' ERROR = TARGETS - OUTPUTS
-        Dim output_errors As Matrix = Matrix.Subtract(targets, outputs)
-        Me.averageError = Math.Abs(output_errors.Average)
-        ' let gradient = outputs * (1 - outputs);
-
-        Dim lambdaFctDSigmoid = Function(x!) dsigmoid(x)
-
-        ' Calculate gradient
-        Dim gradients As Matrix = Matrix.Map(outputs, lambdaFctDSigmoid)
-
-        gradients.Multiply(output_errors)
-        gradients.Multiply(Me.learningRate)
-        ' Calculate hidden -> output delta weights
-        Dim hidden_t As Matrix = Matrix.Transpose(hidden)
-        Dim weight_ho_deltas As Matrix = Matrix.Multiply(gradients, hidden_t)
-        ' Adjust the weights by deltas
-        Me.weights_ho.Add(weight_ho_deltas)
-        ' Adjust the bias by its deltas (which is just the gradients)
-        Me.bias_o.Add(gradients)
-        ' Calculate the hidden layer errors
-        Dim weights_ho_t As Matrix = Matrix.Transpose(Me.weights_ho)
-        Dim hidden_errors As Matrix = Matrix.Multiply(weights_ho_t, output_errors)
-
-        ' Calculate hidden gradient
-        Dim hidden_gradient As Matrix = Matrix.Map(hidden, lambdaFctDSigmoid)
-
-        hidden_gradient.Multiply(hidden_errors)
-        hidden_gradient.Multiply(Me.learningRate)
-        ' Calculate input -> hidden delta weights
-        Dim inputs_t As Matrix = Matrix.Transpose(inputs)
-        Dim weight_ih_deltas As Matrix = Matrix.Multiply(hidden_gradient, inputs_t)
-        Me.weights_ih.Add(weight_ih_deltas)
-        ' Adjust the bias by its deltas (which is just the gradients)
-        Me.bias_h.Add(hidden_gradient)
-
-    End Sub
-
-    Public Sub ComputeError(targets_array!())
-
-        ' Convert array to matrix object
-        Dim targets As Matrix = Matrix.FromArray(targets_array)
-        ' Calculate the error
-        ' ERROR = TARGETS - OUTPUTS
-        Dim output_errors As Matrix = Matrix.Subtract(targets, Me.output)
-        Me.averageError = Math.Abs(output_errors.Average)
+        Train_internal(inputs_array, targets_array, Me.lambdaFct, Me.lambdaFctD,
+            backwardLearningRate:=Me.learningRate, forewardLearningRate:=Me.learningRate)
 
     End Sub
 
     ''' <summary>
-    ''' This is our test function.
+    ''' Train MLP with one sample using actual activation function
     ''' </summary>
-    ''' <returns>The number of correct answers.</returns>
+    Private Sub Train_internal(inputs_array!(), targets_array!(),
+        lambdaFct As Func(Of Single, Single),
+        lambdaFctD As Func(Of Single, Single),
+        backwardLearningRate!, forewardLearningRate!)
+
+        Dim inputs = Matrix.FromArray(inputs_array)
+
+        ' Generating the Hidden Outputs
+        Dim hidden = Matrix.MultiplyAddAndMap(Me.weights_ih, inputs, Me.bias_h, lambdaFct)
+
+        ' Generating the output's output!
+        Dim outputs = Matrix.MultiplyAddAndMap(Me.weights_ho, hidden, Me.bias_o, lambdaFct)
+        Me.output = outputs
+
+        ' Calculate the error: ERROR = TARGETS - OUTPUTS
+        Dim output_errors = ComputeError(targets_array)
+
+        ' Calculate gradient
+        ' Calculate hidden -> output delta weights
+        ' Adjust the weights by deltas
+        ' Calculate the hidden layer errors
+        ComputeGradient(outputs, output_errors, hidden, lambdaFctD, backwardLearningRate,
+            Me.weights_ho, Me.bias_o)
+
+        ' Calculate the hidden layer errors
+        Dim hidden_errors = Matrix.TransposeAndMultiply1(Me.weights_ho, output_errors)
+
+        ' Calculate hidden gradient
+        ' Calculate input -> hidden delta weights
+        ' Adjust the bias by its deltas (which is just the gradients)
+        ComputeGradient(hidden, hidden_errors, inputs, lambdaFctD, forewardLearningRate,
+            Me.weights_ih, Me.bias_h)
+
+    End Sub
+
+    ''' <summary>
+    ''' Compute gradient and return weight and bias matrices
+    ''' </summary>
+    Public Sub ComputeGradient(final As Matrix, error_ As Matrix, original As Matrix,
+        lambdaFctD As Func(Of Single, Single), learningRate!,
+        ByRef weight As Matrix, ByRef bias As Matrix)
+
+        ' Calculate gradient
+        Dim gradient = Matrix.Map(final, lambdaFctD)
+        gradient.Multiply(error_)
+        gradient.Multiply(learningRate)
+
+        ' Calculate original -> final delta weights
+        Dim weight_deltas = Matrix.TransposeAndMultiply2(original, gradient)
+
+        ' Adjust the weights by deltas
+        weight.Add(weight_deltas)
+
+        ' Adjust the bias by its deltas (which is just the gradients)
+        bias.Add(gradient)
+
+    End Sub
+
+    ''' <summary>
+    ''' Compute error from output and target matrices
+    ''' </summary>
+    Public Function ComputeError(targets_array!()) As Matrix
+
+        ' Calculate the error: ERROR = TARGETS - OUTPUTS
+        Dim output_errors = Matrix.SubtractFromArray(targets_array, Me.output)
+        Me.averageError = Math.Abs(output_errors.Average)
+        Return output_errors
+
+    End Function
+
+    ''' <summary>
+    ''' This is our test function
+    ''' </summary>
     Public Function Test(inputs!()) As Single()
         Return Me.FeedForward(inputs)
     End Function

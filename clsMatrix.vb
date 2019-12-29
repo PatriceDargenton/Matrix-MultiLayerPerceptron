@@ -1,11 +1,11 @@
 ﻿
-' From : https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
+' From: https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
 
 Imports System.Text ' StringBuilder
 Imports System.Threading.Tasks ' Parallel.For (for previous Visual Studio)
 
 ''' <summary>
-''' Contains matrix operations.
+''' Contains matrix operations
 ''' </summary>
 Partial Class Matrix
 
@@ -48,13 +48,9 @@ Partial Class Matrix
     End Property
 
     ''' <summary>
-    ''' Constructor.
+    ''' Constructor
     ''' </summary>
-    ''' <param name="rows">Rows</param>
-    ''' <param name="cols">Columns</param>
     Public Sub New(rows%, cols%)
-
-        MyBase.New()
 
         Me.m_rows = rows
         Me.m_cols = cols
@@ -64,10 +60,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Create a Matrix object from an array.
+    ''' Create a matrix object from an array
     ''' </summary>
-    ''' <param name="inputs">Array of data</param>
-    ''' <returns>Returns a Matrix object filled with the array's data.</returns>
     Public Shared Function FromArray(inputs!()) As Matrix
 
         Dim m As New Matrix(inputs.Length, 1)
@@ -81,12 +75,10 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Convert the first vector of the Matrix to array.
+    ''' Convert the first vector of the matrix to array
     ''' </summary>
-    ''' <returns>Returns an array.</returns>
     Public Function ToVectorArray() As Single()
 
-        'Dim array!() = New Single(Me.data.Length - 1) {}
         Dim array!() = New Single(Me.data.GetLength(0) - 1) {}
 
         For i As Integer = 0 To array.Length - 1
@@ -98,24 +90,23 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Fill Matrix with random data.
+    ''' Fill matrix with random data
     ''' </summary>
-    Public Sub Randomize()
+    Public Sub Randomize(minValue!, maxValue!)
 
         Parallel.For(0, Me.Rows,
             Sub(i)
                 Parallel.For(0, Me.Cols,
                     Sub(j)
-                        Me.data(i, j) = rng.NextFloat(-1.0!, 2.0!)
+                        Me.data(i, j) = rng.NextFloat(minValue, maxValue)
                     End Sub)
             End Sub)
 
     End Sub
 
     ''' <summary>
-    ''' Override <c>ToString()</c> method to pretty-print a Matrix object.
+    ''' Override <c>ToString()</c> method to pretty-print the matrix
     ''' </summary>
-    ''' <returns>Returns Matrix object as string.</returns>
     Public Overrides Function ToString$()
 
         Dim sb As New StringBuilder
@@ -133,9 +124,8 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Add a number to each element of the array.
+    ''' Add a number to each element of the array
     ''' </summary>
-    ''' <param name="n">Scalar number</param>
     Public Overloads Sub Add(n%)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -147,9 +137,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Add each element of the Matrices.
+    ''' Add each element of the matrices
     ''' </summary>
-    ''' <param name="m">Matrix object</param>
     Public Overloads Sub Add(m As Matrix)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -161,9 +150,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Subtract a number to each element of the array.
+    ''' Subtract a number to each element of the array
     ''' </summary>
-    ''' <param name="n">Scalar number.</param>
     Public Overloads Sub Subtract(n%)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -175,9 +163,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Subtract each element of the Matrices.
+    ''' Subtract each element of the matrices
     ''' </summary>
-    ''' <param name="m">Matrix object</param>
     Public Overloads Sub Subtract(m As Matrix)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -189,11 +176,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Subtract 2 Matrices and return a new object.
+    ''' Subtract 2 matrices and return a new matrix
     ''' </summary>
-    ''' <param name="a">Matrix object</param>
-    ''' <param name="b">Matrix object</param>
-    ''' <returns>Return a new Matrix object.</returns>
     Public Overloads Shared Function Subtract(a As Matrix, b As Matrix) As Matrix
 
         Dim c As New Matrix(a.Rows, a.Cols)
@@ -209,10 +193,17 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Scalar product.
-    ''' Multiply each element of the array with the given number.
+    ''' Subtract 2 matrices (the first as an array) and return a new matrix
     ''' </summary>
-    ''' <param name="n">Number</param>
+    Public Overloads Shared Function SubtractFromArray(a_array!(), b As Matrix) As Matrix
+        Dim a As Matrix = Matrix.FromArray(a_array)
+        Dim c As Matrix = Matrix.Subtract(a, b)
+        Return c
+    End Function
+
+    ''' <summary>
+    ''' Scalar product: Multiply each element of the array with the given number
+    ''' </summary>
     Public Overloads Sub Multiply(n!)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -224,10 +215,9 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Hadamard product (element-wise multiplication).
-    ''' Multiply each element of the array with each element of the given array.
+    ''' Hadamard product (element-wise multiplication):
+    ''' Multiply each element of the array with each element of the given array
     ''' </summary>
-    ''' <param name="m">Matrix object</param>
     Public Overloads Sub Multiply(m As Matrix)
 
         For i As Integer = 0 To Me.m_rows - 1
@@ -239,11 +229,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Matrix product.
+    ''' Matrix product
     ''' </summary>
-    ''' <param name="a">Matrix object</param>
-    ''' <param name="b">Matrix object</param>
-    ''' <returns>Returns a new Matrix object.</returns>
     Public Overloads Shared Function Multiply(a As Matrix, b As Matrix) As Matrix
 
         If a.Cols <> b.Rows Then
@@ -267,9 +254,33 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Average value.
+    ''' Matrix product (the first as an array)
     ''' </summary>
-    ''' <returns>Returns the average value.</returns>
+    Public Overloads Shared Function MultiplyFromArray(a_array!(), b As Matrix) As Matrix
+        Dim a As Matrix = Matrix.FromArray(a_array)
+        Dim c As Matrix = Matrix.Multiply(b, a)
+        Return c
+    End Function
+
+    ''' <summary>
+    ''' Multiply matrices a and b, add matrix c,
+    '''  and apply a function to every element of the result
+    ''' </summary>
+    Public Overloads Shared Function MultiplyAddAndMap(
+        a As Matrix, b As Matrix, c As Matrix,
+        lambdaFct As Func(Of Single, Single)) As Matrix
+
+        Dim d As Matrix = Matrix.Multiply(a, b)
+        d.Add(c)
+        d.Map(lambdaFct)
+
+        Return d
+
+    End Function
+
+    ''' <summary>
+    ''' Compute average value of the matrix
+    ''' </summary>
     Public Overloads Function Average!()
 
         Dim nbElements% = Me.m_rows * Me.m_cols
@@ -292,10 +303,8 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Transpose a Matrix.
+    ''' Transpose a matrix
     ''' </summary>
-    ''' <param name="m">Matrix object</param>
-    ''' <returns>Returns a new Matrix object.</returns>
     Public Overloads Shared Function Transpose(m As Matrix) As Matrix
 
         Dim c As New Matrix(m.Cols, m.Rows)
@@ -311,7 +320,7 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
-    ''' Transpose a Matrix.
+    ''' Transpose the matrix
     ''' </summary>
     Public Overloads Sub Transpose()
 
@@ -324,9 +333,28 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Apply a function to every element of the array.
+    ''' Transpose and multiply this transposed matrix by m
     ''' </summary>
-    ''' <param name="lambdaFct">Delegate with encapsulates a method</param>
+    Public Overloads Shared Function TransposeAndMultiply1(
+        original As Matrix, m As Matrix) As Matrix
+        Dim original_t As Matrix = Matrix.Transpose(original)
+        Dim result As Matrix = Matrix.Multiply(original_t, m)
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Transpose and multiply a matrix m by this transposed one
+    ''' </summary>
+    Public Overloads Shared Function TransposeAndMultiply2(
+        original As Matrix, m As Matrix) As Matrix
+        Dim original_t As Matrix = Matrix.Transpose(original)
+        Dim result As Matrix = Matrix.Multiply(m, original_t)
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Apply a function to every element of the array
+    ''' </summary>
     Public Sub Map(lambdaFct As Func(Of Single, Single))
 
         For i As Integer = 0 To Me.Rows - 1
@@ -338,11 +366,8 @@ Partial Class Matrix
     End Sub
 
     ''' <summary>
-    ''' Apply a function to every element of the array.
+    ''' Apply a function to every element of the array
     ''' </summary>
-    ''' <param name="m">Matrix object</param>
-    ''' <param name="lambdaFct">Delegate with encapsulates a method</param>
-    ''' <returns>Returns a new Matrix object.</returns>
     Public Shared Function Map(m As Matrix, lambdaFct As Func(Of Single, Single)) As Matrix
 
         Dim c As New Matrix(m.Rows, m.Cols)

@@ -1,7 +1,7 @@
 ﻿
 ' Patrice Dargenton
 ' Matrix-MultiLayerPerceptron
-' From : https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
+' From: https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
 
 Module modMatrixMLPTest
 
@@ -17,7 +17,10 @@ Module modMatrixMLPTest
 
         Dim p As New MultiLayerPerceptron(
             inputNodes:=2, hiddenNodes:=2, outputNodes:=1, learningRate:=0.1!)
-        p.Randomize()
+        'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.Sigmoid)
+        'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.HyperbolicTangent)
+        p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.ELU)
+        p.Randomize(-1, 2)
         Dim training As New ML_TrainingData(inputsLength:=2, targetsLength:=1)
         training.Create()
         Dim inputs!(,) = training.GetInputs

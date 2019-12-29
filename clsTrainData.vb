@@ -1,5 +1,5 @@
 ﻿
-' From : https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
+' From: https://github.com/nlabiris/perceptrons : C# -> VB .NET conversion
 
 Class ML_TrainingData
 
@@ -10,14 +10,13 @@ Class ML_TrainingData
     Private targetsLength%
 
     Public Sub New(inputsLength%, targetsLength%)
-        MyBase.New()
         Me.inputsLength = inputsLength
         Me.targetsLength = targetsLength
     End Sub
 
     Public Sub Create()
 
-        ' XOR
+        ' XOR sample
         Me.data = New Single(,) {
             {0.0!, 0.0!, 0.0!},
             {0.0!, 1.0!, 1.0!},

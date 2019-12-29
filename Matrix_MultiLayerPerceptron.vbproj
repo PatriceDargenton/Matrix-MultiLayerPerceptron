@@ -73,6 +73,7 @@
     <Compile Include="clsMatrixMLP.vb" />
     <Compile Include="clsRndExtension.vb" />
     <Compile Include="clsTrainData.vb" />
+    <Compile Include="modActivation.vb" />
     <Compile Include="modMatrixMLPTest.vb" />
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
