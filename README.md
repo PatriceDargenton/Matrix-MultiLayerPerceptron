@@ -1,10 +1,15 @@
 # Matrix-MultiLayerPerceptron
 
+https://github.com/PatriceDargenton/Matrix-MultiLayerPerceptron
+
 Matrix Multi-Layer Perceptron in VB .NET from C# version https://github.com/nlabiris/perceptrons
 
 This is the classical XOR test.
 
 # Versions
+
+16/02/2020 V1.0.5 Indentation
+- Visual Studio 2019 Indentation
 
 16/02/2020 V1.0.4 Functionnal tests
 - Activation function added: Rectified Linear Units (ReLU) (doesn't work)
