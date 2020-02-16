@@ -11,6 +11,10 @@ Namespace ActivationFunctionForMatrix
         ''' Exponential Linear Units
         ''' </summary>
         ELU = 3
+        ''' <summary>
+        ''' Rectified Linear Units (ReLU)
+        ''' </summary>
+        ReLU = 4
     End Enum
 
     ''' <summary>
@@ -34,9 +38,8 @@ Namespace ActivationFunctionForMatrix
 
         Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
 
-            Dim y# = 1 / (1 + Math.Exp(-(x - center)))
-            Dim ySng! = CSng(y)
-            Return ySng
+            Dim y! = CSng(1 / (1 + Math.Exp(-(x - center))))
+            Return y
 
         End Function
 
@@ -101,6 +104,23 @@ Namespace ActivationFunctionForMatrix
             End If
             Return y
 
+        End Function
+
+    End Class
+
+    ''' <summary>
+    ''' Implements Rectified Linear Unit (ReLU)
+    ''' </summary>
+    Public Class ReluFunction : Implements IActivationFunctionForMatrix
+
+        Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
+            Dim xc! = x - center
+            Return Math.Max(xc * gain, 0)
+        End Function
+
+        Public Function Derivative!(x!, gain!) Implements IActivationFunctionForMatrix.Derivative
+            If x >= 0 Then Return gain
+            Return 0
         End Function
 
     End Class

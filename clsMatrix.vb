@@ -4,20 +4,22 @@
 Imports System.Text ' StringBuilder
 Imports System.Threading.Tasks ' Parallel.For (for previous Visual Studio)
 
+Namespace MatrixMLP
+
 ''' <summary>
 ''' Contains matrix operations
 ''' </summary>
-Partial Class Matrix
+Class Matrix
 
     ''' <summary>
     ''' Rows
     ''' </summary>
-    Private ReadOnly m_rows%
+    Private m_rows% ' ReadOnly
 
     ''' <summary>
     ''' Columns
     ''' </summary>
-    Private ReadOnly m_cols%
+    Private m_cols% ' ReadOnly 
 
     ''' <summary>
     ''' Array data
@@ -74,6 +76,22 @@ Partial Class Matrix
 
     End Function
 
+    Public Sub New(matrix!(,))
+        Me.data = matrix
+        Me.m_rows = Me.data.GetLength(0)
+        Me.m_cols = Me.data.GetLength(1)
+    End Sub
+
+    ' Implicit conversion operator !(,) -> Matrix
+    Public Shared Widening Operator CType(matrix(,) As Single) As Matrix
+        Return New Matrix(matrix)
+    End Operator
+
+    ' Implicit conversion operator Matrix -> !(,)
+    Public Shared Widening Operator CType(matrix As Matrix) As Single(,)
+        Return matrix.data
+    End Operator
+
     ''' <summary>
     ''' Convert the first vector of the matrix to array
     ''' </summary>
@@ -108,15 +126,35 @@ Partial Class Matrix
     ''' Override <c>ToString()</c> method to pretty-print the matrix
     ''' </summary>
     Public Overrides Function ToString$()
+        Return ToStringWithFormat()
+    End Function
+
+    Private Function ToStringWithFormat$(Optional dec$ = "0.00")
+
+        'Dim sb As New StringBuilder
+        'For i As Integer = 0 To Me.m_rows - 1
+        '    For j As Integer = 0 To Me.m_cols - 1
+        '        sb.Append(Me.data(i, j) & " ")
+        '    Next
+        '    sb.AppendLine()
+        'Next
 
         Dim sb As New StringBuilder
-
+        sb.AppendLine("{")
         For i As Integer = 0 To Me.m_rows - 1
+            'If i > 0 Then sb.Append(" ")
+            sb.Append(" {")
             For j As Integer = 0 To Me.m_cols - 1
-                sb.Append(Me.data(i, j) & " ")
+                ' Add a ! for Single value in order to init directly a matrix 
+                '  via a Single array using implicit convertor
+                Dim strVal$ = Me.data(i, j).ToString(dec).Replace(",", ".") & "!"
+                sb.Append(strVal)
+                If j < Me.m_cols - 1 Then sb.Append(", ")
             Next
-            sb.AppendLine()
+            sb.Append("}")
+            If i < Me.m_rows - 1 Then sb.Append("," & vbLf)
         Next
+        sb.Append("}")
 
         Dim s$ = sb.ToString
         Return s
@@ -279,6 +317,20 @@ Partial Class Matrix
     End Function
 
     ''' <summary>
+    ''' Multiply matrices a and b, and apply a function to every element of the result
+    ''' </summary>
+    Public Overloads Shared Function MultiplyAndMap(
+        a As Matrix, b As Matrix,
+        lambdaFct As Func(Of Single, Single)) As Matrix
+
+        Dim d As Matrix = Matrix.Multiply(a, b)
+        d.Map(lambdaFct)
+
+        Return d
+
+    End Function
+
+    ''' <summary>
     ''' Compute average value of the matrix
     ''' </summary>
     Public Overloads Function Average!()
@@ -383,3 +435,5 @@ Partial Class Matrix
     End Function
 
 End Class
+
+End Namespace

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{515F597B-6339-4E1E-9803-C44B24237EC3}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>Matrix_MultiLayerPerceptron.modMatrixMLPTest</StartupObject>
+    <StartupObject>Matrix_MultiLayerPerceptron.MatrixMLP.modMatrixMLPTest</StartupObject>
     <RootNamespace>Matrix_MultiLayerPerceptron</RootNamespace>
     <AssemblyName>Matrix_MultiLayerPerceptron</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -48,6 +48,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -71,6 +75,7 @@
   <ItemGroup>
     <Compile Include="clsMatrix.vb" />
     <Compile Include="clsMatrixMLP.vb" />
+    <Compile Include="clsMatrixMLPTest.vb" />
     <Compile Include="clsRndExtension.vb" />
     <Compile Include="clsTrainData.vb" />
     <Compile Include="modActivation.vb" />
@@ -110,6 +115,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
