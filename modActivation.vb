@@ -24,11 +24,11 @@ Namespace ActivationFunctionForMatrix
         ''' <summary>
         ''' Activation function
         ''' </summary>
-        Function Activation!(x!, gain!, center!)
+        Function Activation#(x#, gain#, center#)
         ''' <summary>
         ''' Derivative function
         ''' </summary>
-        Function Derivative!(x!, gain!)
+        Function Derivative#(x#, gain#)
     End Interface
 
     ''' <summary>
@@ -36,16 +36,16 @@ Namespace ActivationFunctionForMatrix
     ''' </summary>
     Public Class SigmoidFunction : Implements IActivationFunctionForMatrix
 
-        Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
+        Public Function Activation#(x#, gain#, center#) Implements IActivationFunctionForMatrix.Activation
 
-            Dim y! = CSng(1 / (1 + Math.Exp(-(x - center))))
+            Dim y# = 1 / (1 + Math.Exp(-(x - center)))
             Return y
 
         End Function
 
-        Public Function Derivative!(x!, gain!) Implements IActivationFunctionForMatrix.Derivative
+        Public Function Derivative#(x#, gain#) Implements IActivationFunctionForMatrix.Derivative
 
-            Dim y! = x * (1 - x)
+            Dim y# = x * (1 - x)
             Return y
 
         End Function
@@ -57,17 +57,17 @@ Namespace ActivationFunctionForMatrix
     ''' </summary>
     Public Class HyperbolicTangentFunction : Implements IActivationFunctionForMatrix
 
-        Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
+        Public Function Activation#(x#, gain#, center#) Implements IActivationFunctionForMatrix.Activation
 
-            Dim xc! = x - center
-            Dim y! = CSng(2 / (1 + Math.Exp(-2 * xc)) - 1)
+            Dim xc# = x - center
+            Dim y# = 2 / (1 + Math.Exp(-2 * xc)) - 1
             Return y
 
         End Function
 
-        Public Function Derivative!(x!, gain!) Implements IActivationFunctionForMatrix.Derivative
+        Public Function Derivative#(x#, gain#) Implements IActivationFunctionForMatrix.Derivative
 
-            Dim y! = 1 - x * x
+            Dim y# = 1 - x * x
             Return y
 
         End Function
@@ -79,24 +79,24 @@ Namespace ActivationFunctionForMatrix
     ''' </summary>
     Public Class ELUFunction : Implements IActivationFunctionForMatrix
 
-        Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
+        Public Function Activation#(x#, gain#, center#) Implements IActivationFunctionForMatrix.Activation
 
-            Dim xc! = x - center
-            Dim y!
+            Dim xc# = x - center
+            Dim y#
             If xc >= 0 Then
                 y = xc
             Else
-                y = CSng(gain * (Math.Exp(xc) - 1))
+                y = gain * (Math.Exp(xc) - 1)
             End If
             Return y
 
         End Function
 
-        Public Function Derivative!(x!, gain!) Implements IActivationFunctionForMatrix.Derivative
+        Public Function Derivative#(x#, gain#) Implements IActivationFunctionForMatrix.Derivative
 
             If gain < 0 Then Return 0
 
-            Dim y!
+            Dim y#
             If x >= 0 Then
                 y = 1
             Else
@@ -113,12 +113,12 @@ Namespace ActivationFunctionForMatrix
     ''' </summary>
     Public Class ReluFunction : Implements IActivationFunctionForMatrix
 
-        Public Function Activation!(x!, gain!, center!) Implements IActivationFunctionForMatrix.Activation
-            Dim xc! = x - center
+        Public Function Activation#(x#, gain#, center#) Implements IActivationFunctionForMatrix.Activation
+            Dim xc# = x - center
             Return Math.Max(xc * gain, 0)
         End Function
 
-        Public Function Derivative!(x!, gain!) Implements IActivationFunctionForMatrix.Derivative
+        Public Function Derivative#(x#, gain#) Implements IActivationFunctionForMatrix.Derivative
             If x >= 0 Then Return gain
             Return 0
         End Function

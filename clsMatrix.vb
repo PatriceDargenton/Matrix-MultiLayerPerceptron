@@ -24,7 +24,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Array data
         ''' </summary>
-        Private data!(,)
+        Private data#(,)
 
         ''' <summary>
         ''' Random number generator
@@ -57,14 +57,14 @@ Namespace MatrixMLP
             Me.m_rows = rows
             Me.m_cols = cols
 
-            Me.data = New Single(rows - 1, cols - 1) {}
+            Me.data = New Double(rows - 1, cols - 1) {}
 
         End Sub
 
         ''' <summary>
         ''' Create a matrix object from an array
         ''' </summary>
-        Public Shared Function FromArray(inputs!()) As Matrix
+        Public Shared Function FromArray(inputs#()) As Matrix
 
             Dim m As New Matrix(inputs.Length, 1)
 
@@ -76,28 +76,59 @@ Namespace MatrixMLP
 
         End Function
 
-        Public Sub New(matrix!(,))
+        ''' <summary>
+        ''' Create a matrix object from an array of Single
+        ''' </summary>
+        Public Shared Function FromArraySingle(inputs!()) As Matrix
+
+            Dim m As New Matrix(inputs.Length, 1)
+
+            For i As Integer = 0 To inputs.Length - 1
+                m.data(i, 0) = inputs(i)
+            Next
+
+            Return m
+
+        End Function
+
+        Public Sub New(matrix#(,))
             Me.data = matrix
             Me.m_rows = Me.data.GetLength(0)
             Me.m_cols = Me.data.GetLength(1)
         End Sub
+
+        Public Sub New(matrix!(,))
+            Me.m_rows = matrix.GetLength(0)
+            Me.m_cols = matrix.GetLength(1)
+            ReDim Me.data(0 To Me.m_rows - 1, 0 To Me.m_cols - 1)
+            For i As Integer = 0 To Me.m_rows - 1
+                For j As Integer = 0 To Me.m_cols - 1
+                    Me.data(i, j) = matrix(i, j)
+                Next
+            Next
+        End Sub
+
+        ' Implicit conversion operator #(,) -> Matrix
+        Public Shared Widening Operator CType(matrix(,) As Double) As Matrix
+            Return New Matrix(matrix)
+        End Operator
+
+        ' Implicit conversion operator Matrix -> #(,)
+        Public Shared Widening Operator CType(matrix As Matrix) As Double(,)
+            Return matrix.data
+        End Operator
 
         ' Implicit conversion operator !(,) -> Matrix
         Public Shared Widening Operator CType(matrix(,) As Single) As Matrix
             Return New Matrix(matrix)
         End Operator
 
-        ' Implicit conversion operator Matrix -> !(,)
-        Public Shared Widening Operator CType(matrix As Matrix) As Single(,)
-            Return matrix.data
-        End Operator
-
         ''' <summary>
         ''' Convert the first vector of the matrix to array
         ''' </summary>
-        Public Function ToVectorArray() As Single()
+        Public Function ToVectorArray() As Double()
 
-            Dim array!() = New Single(Me.data.GetLength(0) - 1) {}
+            Dim array#() = New Double(Me.data.GetLength(0) - 1) {}
 
             For i As Integer = 0 To array.Length - 1
                 array(i) = Me.data(i, 0)
@@ -108,15 +139,30 @@ Namespace MatrixMLP
         End Function
 
         ''' <summary>
+        ''' Convert the first vector of the matrix to array of Single
+        ''' </summary>
+        Public Function ToVectorArraySingle() As Single()
+
+            Dim array!() = New Single(Me.data.GetLength(0) - 1) {}
+
+            For i As Integer = 0 To array.Length - 1
+                array(i) = CSng(Me.data(i, 0))
+            Next
+
+            Return array
+
+        End Function
+
+        ''' <summary>
         ''' Fill matrix with random data
         ''' </summary>
-        Public Sub Randomize(minValue!, maxValue!)
+        Public Sub Randomize(minValue#, maxValue#)
 
             Parallel.For(0, Me.Rows,
                 Sub(i)
                     Parallel.For(0, Me.Cols,
                         Sub(j)
-                            Me.data(i, j) = rng.NextFloat(minValue, maxValue)
+                            Me.data(i, j) = rng.NextDouble(minValue, maxValue)
                         End Sub)
                 End Sub)
 
@@ -145,9 +191,7 @@ Namespace MatrixMLP
                 'If i > 0 Then sb.Append(" ")
                 sb.Append(" {")
                 For j As Integer = 0 To Me.m_cols - 1
-                    ' Add a ! for Single value in order to init directly a matrix 
-                    '  via a Single array using implicit convertor
-                    Dim strVal$ = Me.data(i, j).ToString(dec).Replace(",", ".") & "!"
+                    Dim strVal$ = Me.data(i, j).ToString(dec).Replace(",", ".")
                     sb.Append(strVal)
                     If j < Me.m_cols - 1 Then sb.Append(", ")
                 Next
@@ -233,8 +277,17 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Subtract 2 matrices (the first as an array) and return a new matrix
         ''' </summary>
-        Public Overloads Shared Function SubtractFromArray(a_array!(), b As Matrix) As Matrix
+        Public Overloads Shared Function SubtractFromArray(a_array#(), b As Matrix) As Matrix
             Dim a As Matrix = Matrix.FromArray(a_array)
+            Dim c As Matrix = Matrix.Subtract(a, b)
+            Return c
+        End Function
+
+        ''' <summary>
+        ''' Subtract 2 matrices (the first as an array of Single) and return a new matrix
+        ''' </summary>
+        Public Overloads Shared Function SubtractFromArraySingle(a_array!(), b As Matrix) As Matrix
+            Dim a As Matrix = Matrix.FromArraySingle(a_array)
             Dim c As Matrix = Matrix.Subtract(a, b)
             Return c
         End Function
@@ -242,7 +295,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Scalar product: Multiply each element of the array with the given number
         ''' </summary>
-        Public Overloads Sub Multiply(n!)
+        Public Overloads Sub Multiply(n#)
 
             For i As Integer = 0 To Me.m_rows - 1
                 For j As Integer = 0 To Me.m_cols - 1
@@ -279,7 +332,7 @@ Namespace MatrixMLP
 
             For i As Integer = 0 To c.Rows - 1
                 For j As Integer = 0 To c.Cols - 1
-                    Dim sum! = 0
+                    Dim sum# = 0
                     For k As Integer = 0 To a.Cols - 1
                         sum += a.data(i, k) * b.data(k, j)
                     Next
@@ -294,7 +347,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Matrix product (the first as an array)
         ''' </summary>
-        Public Overloads Shared Function MultiplyFromArray(a_array!(), b As Matrix) As Matrix
+        Public Overloads Shared Function MultiplyFromArray(a_array#(), b As Matrix) As Matrix
             Dim a As Matrix = Matrix.FromArray(a_array)
             Dim c As Matrix = Matrix.Multiply(b, a)
             Return c
@@ -306,7 +359,7 @@ Namespace MatrixMLP
         ''' </summary>
         Public Overloads Shared Function MultiplyAddAndMap(
             a As Matrix, b As Matrix, c As Matrix,
-            lambdaFct As Func(Of Single, Single)) As Matrix
+            lambdaFct As Func(Of Double, Double)) As Matrix
 
             Dim d As Matrix = Matrix.Multiply(a, b)
             d.Add(c)
@@ -321,7 +374,7 @@ Namespace MatrixMLP
         ''' </summary>
         Public Overloads Shared Function MultiplyAndMap(
             a As Matrix, b As Matrix,
-            lambdaFct As Func(Of Single, Single)) As Matrix
+            lambdaFct As Func(Of Double, Double)) As Matrix
 
             Dim d As Matrix = Matrix.Multiply(a, b)
             d.Map(lambdaFct)
@@ -333,17 +386,17 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Compute average value of the matrix
         ''' </summary>
-        Public Overloads Function Average!()
+        Public Overloads Function Average#()
 
             Dim nbElements% = Me.m_rows * Me.m_cols
-            Dim sum! = 0
+            Dim sum# = 0
             For i As Integer = 0 To Me.m_rows - 1
                 For j As Integer = 0 To Me.m_cols - 1
                     sum += Me.data(i, j)
                 Next
             Next
 
-            Dim rAverage! = 0
+            Dim rAverage# = 0
             If nbElements <= 1 Then
                 rAverage = sum
             Else
@@ -407,7 +460,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Apply a function to every element of the array
         ''' </summary>
-        Public Sub Map(lambdaFct As Func(Of Single, Single))
+        Public Sub Map(lambdaFct As Func(Of Double, Double))
 
             For i As Integer = 0 To Me.Rows - 1
                 For j As Integer = 0 To Me.Cols - 1
@@ -420,7 +473,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Apply a function to every element of the array
         ''' </summary>
-        Public Shared Function Map(m As Matrix, lambdaFct As Func(Of Single, Single)) As Matrix
+        Public Shared Function Map(m As Matrix, lambdaFct As Func(Of Double, Double)) As Matrix
 
             Dim c As New Matrix(m.Rows, m.Cols)
 

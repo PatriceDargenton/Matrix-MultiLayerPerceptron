@@ -65,12 +65,12 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Lambda function for the activation function
         ''' </summary>
-        Private lambdaFct As Func(Of Single, Single)
+        Private lambdaFct As Func(Of Double, Double)
 
         ''' <summary>
         ''' Lambda function for the derivative of the activation function
         ''' </summary>
-        Private lambdaFctD As Func(Of Single, Single)
+        Private lambdaFctD As Func(Of Double, Double)
 
         ''' <summary>
         ''' Constructor
@@ -100,8 +100,8 @@ Namespace MatrixMLP
 
             Me.learningRate = learningRate
 
-            Dim lambdaFct = Function(x!) activFct.Activation(x, gain:=1, center:=0)
-            Dim lambdaFctD = Function(x!) activFct.Derivative(x, gain:=1)
+            Dim lambdaFct = Function(x#) activFct.Activation(x, gain:=1, center:=0)
+            Dim lambdaFctD = Function(x#) activFct.Derivative(x, gain:=1)
             SetLambdaActivationFunction(lambdaFct, lambdaFctD)
 
         End Sub
@@ -110,8 +110,8 @@ Namespace MatrixMLP
         ''' Set specific activation function
         ''' </summary>
         Public Sub SetLambdaActivationFunction(
-            lambdaFct As Func(Of Single, Single),
-            lambdaFctD As Func(Of Single, Single))
+            lambdaFct As Func(Of Double, Double),
+            lambdaFctD As Func(Of Double, Double))
             Me.lambdaFct = lambdaFct
             Me.lambdaFctD = lambdaFctD
         End Sub
@@ -164,10 +164,10 @@ Namespace MatrixMLP
         ''' Propagate the input signal into the MLP using actual activation function
         ''' </summary>
         Public Function FeedForward_internal(inputs_array!(),
-            lambdaFct As Func(Of Single, Single)) As Single()
+            lambdaFct As Func(Of Double, Double)) As Single()
 
             ' Generating the Hidden Outputs
-            Dim inputs = Matrix.FromArray(inputs_array)
+            Dim inputs = Matrix.FromArraySingle(inputs_array)
             Dim hidden As Matrix
             If Me.m_useBias Then
                 hidden = Matrix.MultiplyAddAndMap(Me.weights_ih, inputs, Me.bias_h, lambdaFct)
@@ -184,7 +184,7 @@ Namespace MatrixMLP
             End If
             Me.output = output
 
-            Dim aSng = output.ToVectorArray()
+            Dim aSng = output.ToVectorArraySingle()
             Return aSng
 
         End Function
@@ -203,11 +203,11 @@ Namespace MatrixMLP
         ''' Train MLP with one sample using actual activation function
         ''' </summary>
         Private Sub Train_internal(inputs_array!(), targets_array!(),
-            lambdaFct As Func(Of Single, Single),
-            lambdaFctD As Func(Of Single, Single),
+            lambdaFct As Func(Of Double, Double),
+            lambdaFctD As Func(Of Double, Double),
             backwardLearningRate!, forewardLearningRate!)
 
-            Dim inputs = Matrix.FromArray(inputs_array)
+            Dim inputs = Matrix.FromArraySingle(inputs_array)
 
             ' Generating the Hidden Outputs
             Dim hidden As Matrix
@@ -251,7 +251,7 @@ Namespace MatrixMLP
         ''' Compute gradient and return weight and bias matrices
         ''' </summary>
         Public Sub ComputeGradient(final As Matrix, error_ As Matrix, original As Matrix,
-            lambdaFctD As Func(Of Single, Single), learningRate!,
+            lambdaFctD As Func(Of Double, Double), learningRate!,
             ByRef weight As Matrix, ByRef bias As Matrix)
 
             ' Calculate gradient
@@ -276,7 +276,7 @@ Namespace MatrixMLP
         Public Function ComputeError(targets_array!()) As Matrix
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Me.LastError = Matrix.SubtractFromArray(targets_array, Me.output)
+            Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
             Me.averageError = Math.Abs(Me.LastError.Average)
             Return Me.LastError
 
@@ -285,7 +285,7 @@ Namespace MatrixMLP
         Public Function ComputeAverageError!(targets_array!())
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Me.LastError = Matrix.SubtractFromArray(targets_array, Me.output)
+            Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
             Dim averageError! = Math.Abs(Me.LastError.Average)
             Return averageError
 

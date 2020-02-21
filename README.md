@@ -8,6 +8,10 @@ This is the classical XOR test.
 
 # Versions
 
+21/02/2020 V1.0.6 Double data type
+- Matrix.data: Single -> Double: No more need to append ! Single sign in functionnal tests
+- Activation function: Single -> Double
+
 16/02/2020 V1.0.5 Indentation
 - Visual Studio 2019 Indentation
 
