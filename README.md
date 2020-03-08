@@ -8,6 +8,10 @@ This is the classical XOR test.
 
 # Versions
 
+08/03/2020 V1.0.7 Average error
+- ComputeAverageError: Compute first abs then average
+- UnitTestFramework.dll: local path
+
 21/02/2020 V1.0.6 Double data type
 - Matrix.data: Single -> Double: No more need to append ! Single sign in functionnal tests
 - Activation function: Single -> Double

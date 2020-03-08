@@ -384,6 +384,23 @@ Namespace MatrixMLP
         End Function
 
         ''' <summary>
+        ''' Compute absolute values of a matrix
+        ''' </summary>
+        Public Overloads Function Abs() As Matrix
+
+            Dim c As New Matrix(Me.m_rows, Me.m_cols)
+
+            For i As Integer = 0 To Me.m_rows - 1
+                For j As Integer = 0 To Me.m_cols - 1
+                    c.data(i, j) = Math.Abs(Me.data(i, j))
+                Next
+            Next
+
+            Return c
+
+        End Function
+
+        ''' <summary>
         ''' Compute average value of the matrix
         ''' </summary>
         Public Overloads Function Average#()

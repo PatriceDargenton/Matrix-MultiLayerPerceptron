@@ -69,7 +69,7 @@ Namespace MatrixMLP
             Dim sExpectedOutput = expectedMatrix.ToString()
             Assert.AreEqual(sOutput, sExpectedOutput)
 
-            Dim rExpectedLoss# = 0
+            Dim rExpectedLoss# = 0.01
             Dim rLoss! = m_mlp.ComputeAverageError(TargetValue)
             Dim rLossRounded# = Math.Round(rLoss, 2)
             Assert.AreEqual(rExpectedLoss, rLossRounded)
@@ -110,7 +110,7 @@ Namespace MatrixMLP
             Dim sExpectedOutput = expectedMatrix.ToString()
             Assert.AreEqual(sOutput, sExpectedOutput)
 
-            Dim rExpectedLoss# = 0.02
+            Dim rExpectedLoss# = 0.06
             Dim rLoss! = m_mlp.ComputeAverageError(TargetValue)
             Dim rLossRounded# = Math.Round(rLoss, 2)
             Assert.AreEqual(rExpectedLoss, rLossRounded)

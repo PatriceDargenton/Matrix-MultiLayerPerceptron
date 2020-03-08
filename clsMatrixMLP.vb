@@ -277,7 +277,9 @@ Namespace MatrixMLP
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
             Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
-            Me.averageError = Math.Abs(Me.LastError.Average)
+            'Me.averageError = Math.Abs(Me.LastError.Average)
+            ' Compute first abs then average:
+            Dim averageError! = CSng(Me.LastError.Abs.Average)
             Return Me.LastError
 
         End Function
@@ -286,7 +288,9 @@ Namespace MatrixMLP
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
             Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
-            Dim averageError! = Math.Abs(Me.LastError.Average)
+            'Dim averageError! = Math.Abs(Me.LastError.Average)
+            ' Compute first abs then average:
+            Dim averageError! = CSng(Me.LastError.Abs.Average)
             Return averageError
 
         End Function
@@ -297,7 +301,9 @@ Namespace MatrixMLP
             Dim m As Matrix = targets_array
             Dim targets_array1D = m.ToVectorArray()
             Me.LastError = Matrix.SubtractFromArray(targets_array1D, Me.output)
-            Dim averageError! = Math.Abs(Me.LastError.Average)
+            'Dim averageError! = Math.Abs(Me.LastError.Average)
+            ' Compute first abs then average:
+            Dim averageError! = CSng(Me.LastError.Abs.Average)
             Return averageError
 
         End Function
