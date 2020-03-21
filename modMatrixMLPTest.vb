@@ -28,12 +28,12 @@ Namespace MatrixMLP
             'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.Sigmoid)
 
             ' Works fine
-            'nbIterations = 1000000
-            'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.HyperbolicTangent)
+            nbIterations = 100000
+            p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.HyperbolicTangent)
 
             ' Works fine
-            nbIterations = 100000
-            p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.ELU)
+            'nbIterations = 100000
+            'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.ELU)
 
             ' Doesn't work
             'nbIterations = 1000000
@@ -41,7 +41,7 @@ Namespace MatrixMLP
 
             'p.Init(inputNodes:=2, hiddenNodes:=2, outputNodes:=1, learningRate:=0.1!)
             Dim NeuronCount = New Integer() {2, 2, 1}
-            p.InitStruct(NeuronCount, addBiasColumn:=False)
+            p.InitStruct(NeuronCount, addBiasColumn:=True)
             p.Init(learningRate:=0.1)
 
             p.Randomize(-1, 2)
@@ -49,17 +49,29 @@ Namespace MatrixMLP
             Dim training As New ML_TrainingData(inputsLength:=2, targetsLength:=nbOutput)
             training.Create()
             Dim inputs!(,) = training.GetInputs
-            Dim outputs!(,) = training.GetOutputs
+            Dim targets!(,) = training.GetOutputs
+
+            Dim length% = inputs.GetLength(0)
+            Dim nbInputs% = inputs.GetLength(1)
 
             For i As Integer = 0 To nbIterations - 1
                 Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=4) ' Stochastic learning
-                Dim inp!() = New Single() {inputs(r, 0), inputs(r, 1)}
-                Dim outp!() = New Single() {outputs(r, 0)}
-                p.Train(inp, outp)
+
+                Dim inp!(0 To nbInputs - 1)
+                For k As Integer = 0 To nbInputs - 1
+                    inp(k) = inputs(r, k)
+                Next
+                Dim target!(0 To nbOutput - 1)
+                For k As Integer = 0 To nbOutput - 1
+                    target(k) = targets(r, k)
+                Next
+
+                p.Train(inp, target)
 
                 If i < 10 OrElse
-                    (i + 1) Mod 10000 = 0 OrElse
-                    ((i + 1) Mod 1000 = 0 AndAlso i < 10000) Then
+                   (i + 1) Mod 10000 = 0 OrElse
+                   ((i + 1) Mod 1000 = 0 AndAlso i < 10000) Then
+                    p.ComputeAverageErrorFromLastError()
                     Dim sMsg$ = "Iteration n°" & i + 1 & "/" & nbIterations &
                         " : average error = " & p.averageError.ToString("0.00")
                     Console.WriteLine(sMsg)
@@ -68,25 +80,13 @@ Namespace MatrixMLP
 
             Next
 
-            Dim length% = training.data.GetLength(0)
-            For i As Integer = 0 To length - 1
-                Dim r1! = inputs(i, 0)
-                Dim r2! = inputs(i, 1)
-                Dim inp!() = New Single() {r1, r2}
-                Dim ar!() = p.Test(inp)
-                Dim r! = ar(0)
-
-                Dim outp!() = New Single() {outputs(i, 0)}
-                Dim averageError = p.ComputeAverageError(outp)
-
-                Dim sMsg$ = r1 & ", " & r2 & " -> " & r.ToString("0.000000") &
-                    " : error = " & averageError.ToString("0.000000")
-                Console.WriteLine(sMsg)
-                Debug.WriteLine(sMsg)
-            Next
-
-            Dim m As Matrix = p.TestAllSamples(inputs, nbOutput)
-            Debug.WriteLine("Result matrix: " & m.ToString())
+            p.output = p.TestAllSamples(inputs, nbOutput)
+            p.targetArray = targets
+            p.ComputeAverageError()
+            Debug.WriteLine("Result matrix: " & p.output.ToString())
+            Debug.WriteLine("Average error = " & p.averageError.ToString("0.000000"))
+            Console.WriteLine("Result matrix: " & p.output.ToString())
+            Console.WriteLine("Average error = " & p.averageError.ToString("0.000000"))
 
         End Sub
 

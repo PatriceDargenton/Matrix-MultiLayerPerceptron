@@ -12,6 +12,8 @@ Namespace MatrixMLP
 
         Public m_useBias As Boolean
 
+        Public targetArray As Single(,)
+
         ''' <summary>
         ''' Random generator
         ''' </summary>
@@ -50,7 +52,7 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Last error of the output matrix
         ''' </summary>
-        Public LastError As Matrix
+        Public lastError As Matrix
 
         ''' <summary>
         ''' Learning rate of the MLP
@@ -152,6 +154,18 @@ Namespace MatrixMLP
         End Sub
 
         ''' <summary>
+        ''' Print weights for functionnal test
+        ''' </summary>
+        Public Sub PrintWeights()
+            Debug.WriteLine("Me.weights_ih=" & Me.weights_ih.ToString())
+            Debug.WriteLine("Me.weights_ho=" & Me.weights_ho.ToString())
+            If Me.m_useBias Then
+                Debug.WriteLine("Me.bias_h=" & Me.bias_h.ToString())
+                Debug.WriteLine("Me.bias_o=" & Me.bias_o.ToString())
+            End If
+        End Sub
+
+        ''' <summary>
         ''' Propagate the input signal into the MLP
         ''' </summary>
         Public Function FeedForward(inputs_array!()) As Single()
@@ -227,17 +241,17 @@ Namespace MatrixMLP
             Me.output = outputs
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Dim output_errors = ComputeError(targets_array)
+            ComputeErrorOneSample(targets_array)
 
             ' Calculate gradient
             ' Calculate hidden -> output delta weights
             ' Adjust the weights by deltas
             ' Calculate the hidden layer errors
-            ComputeGradient(outputs, output_errors, hidden, lambdaFctD, backwardLearningRate,
+            ComputeGradient(outputs, Me.lastError, hidden, lambdaFctD, backwardLearningRate,
                 Me.weights_ho, Me.bias_o)
 
             ' Calculate the hidden layer errors
-            Dim hidden_errors = Matrix.TransposeAndMultiply1(Me.weights_ho, output_errors)
+            Dim hidden_errors = Matrix.TransposeAndMultiply1(Me.weights_ho, Me.lastError)
 
             ' Calculate hidden gradient
             ' Calculate input -> hidden delta weights
@@ -273,102 +287,110 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Compute error from output and target matrices
         ''' </summary>
-        Public Function ComputeError(targets_array!()) As Matrix
+        Public Sub ComputeErrorOneSample(targets_array!())
 
             ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
-            'Me.averageError = Math.Abs(Me.LastError.Average)
+            Me.lastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
+
+        End Sub
+
+        Public Sub ComputeError()
+            ' Calculate the error: ERROR = TARGETS - OUTPUTS
+            Dim m As Matrix = Me.targetArray
+            Me.lastError = m - Me.output
+        End Sub
+
+        Public Sub ComputeAverageErrorFromLastError()
+
             ' Compute first abs then average:
-            Dim averageError! = CSng(Me.LastError.Abs.Average)
-            Return Me.LastError
+            'Me.averageError = CSng(Matrix.Abs(Me.lastError).Average)
+            Me.averageError = CSng(Me.lastError.Abs.Average)
+
+        End Sub
+
+        Public Function ComputeAverageError!()
+
+            Me.ComputeError()
+            Me.ComputeAverageErrorFromLastError()
+            Return Me.averageError
 
         End Function
 
-        Public Function ComputeAverageError!(targets_array!())
-
-            ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Me.LastError = Matrix.SubtractFromArraySingle(targets_array, Me.output)
-            'Dim averageError! = Math.Abs(Me.LastError.Average)
-            ' Compute first abs then average:
-            Dim averageError! = CSng(Me.LastError.Abs.Average)
-            Return averageError
-
-        End Function
-
-        Public Function ComputeAverageError!(targets_array!(,))
-
-            ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Dim m As Matrix = targets_array
-            Dim targets_array1D = m.ToVectorArray()
-            Me.LastError = Matrix.SubtractFromArray(targets_array1D, Me.output)
-            'Dim averageError! = Math.Abs(Me.LastError.Average)
-            ' Compute first abs then average:
-            Dim averageError! = CSng(Me.LastError.Abs.Average)
-            Return averageError
-
-        End Function
-
-        Public Sub TrainStochastic(inputs!(,), outputs!(,), nbIterations%)
+        Public Sub TrainStochastic(inputs!(,), targets!(,), nbIterations%)
 
             Dim nbLines% = inputs.GetLength(0)
             Dim nbInputs% = inputs.GetLength(1)
-            Dim nbOutputs% = outputs.GetLength(1)
+            Dim nbTargets% = targets.GetLength(1)
             For i As Integer = 0 To nbIterations - 1
-                Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=nbLines) ' Stochastic learning
+
+                ' Stochastic learning
+                Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=nbLines)
 
                 Dim inp!(0 To nbInputs - 1)
                 For k As Integer = 0 To nbInputs - 1
                     inp(k) = inputs(r, k)
                 Next
-                Dim outp!(0 To nbOutputs - 1)
-                For k As Integer = 0 To nbOutputs - 1
-                    outp(k) = outputs(r, k)
+                Dim targ!(0 To nbTargets - 1)
+                For k As Integer = 0 To nbTargets - 1
+                    targ(k) = targets(r, k)
                 Next
 
-                Train(inp, outp)
+                Train(inp, targ)
             Next
 
         End Sub
 
-        Public Sub TrainSemiStochastic(inputs!(,), outputs!(,), nbIterations%)
+        Public Sub TrainSemiStochastic(inputs!(,), targets!(,), nbIterations%)
 
             Dim nbLines% = inputs.GetLength(0)
             Dim nbInputs% = inputs.GetLength(1)
-            Dim nbOutputs% = outputs.GetLength(1)
+            Dim nbTargets% = targets.GetLength(1)
             For i As Integer = 0 To nbIterations - 1
-                Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=nbLines) ' Stochastic learning
+
+                ' Semi-stochastic learning
+                Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=nbLines)
+
                 Dim inp!(0 To nbInputs - 1)
                 For k As Integer = 0 To nbInputs - 1
                     inp(k) = inputs(r, k)
                 Next
-                Dim outp!(0 To nbOutputs - 1)
-                For k As Integer = 0 To nbOutputs - 1
-                    outp(k) = outputs(r, k)
+                Dim targ!(0 To nbTargets - 1)
+                For k As Integer = 0 To nbTargets - 1
+                    targ(k) = targets(r, k)
                 Next
-                Train(inp, outp)
+                Train(inp, targ)
             Next
 
         End Sub
 
-        Public Sub TrainSystematic(inputs!(,), outputs!(,), nbIterations%)
+        Public Sub TrainSystematic(inputs!(,), targets!(,), nbIterations%)
+
+            Dim nbTargets% = targets.GetLength(1)
+            For i As Integer = 0 To nbIterations - 1
+                TrainAllSamples(inputs, targets)
+            Next
+            TestAllSamples(inputs, nbTargets)
+
+        End Sub
+
+        Public Sub TrainAllSamples(inputs!(,), targets!(,))
 
             Dim nbLines% = inputs.GetLength(0)
             Dim nbInputs% = inputs.GetLength(1)
-            Dim nbOutputs% = outputs.GetLength(1)
-            For i As Integer = 0 To nbIterations - 1
-                For j As Integer = 0 To nbLines - 1 ' Systematic learning
+            Dim nbTargets% = targets.GetLength(1)
 
-                    Dim inp!(0 To nbInputs - 1)
-                    For k As Integer = 0 To nbInputs - 1
-                        inp(k) = inputs(j, k)
-                    Next
-                    Dim outp!(0 To nbOutputs - 1)
-                    For k As Integer = 0 To nbOutputs - 1
-                        outp(k) = outputs(j, k)
-                    Next
+            For j As Integer = 0 To nbLines - 1 ' Systematic learning
 
-                    Train(inp, outp)
+                Dim inp!(0 To nbInputs - 1)
+                For k As Integer = 0 To nbInputs - 1
+                    inp(k) = inputs(j, k)
                 Next
+                Dim targ!(0 To nbTargets - 1)
+                For k As Integer = 0 To nbTargets - 1
+                    targ(k) = targets(j, k)
+                Next
+
+                Train(inp, targ)
             Next
 
         End Sub
@@ -376,14 +398,14 @@ Namespace MatrixMLP
         ''' <summary>
         ''' Test one sample and return the sample output
         ''' </summary>
-        Public Function Test(inputs!()) As Single()
+        Public Function TestOneSample(inputs!()) As Single()
             Return Me.FeedForward(inputs)
         End Function
 
         ''' <summary>
         ''' Test all samples and return output matrix for all samples
         ''' </summary>
-        Public Function TestAllSamples(inputs!(,), nbOutputs%) As Matrix
+        Public Function TestAllSamples(inputs!(,), nbOutputs%) As Single(,)
 
             Dim length% = inputs.GetLength(0)
             Dim nbInputs% = inputs.GetLength(1)
@@ -393,14 +415,12 @@ Namespace MatrixMLP
                 For k As Integer = 0 To nbInputs - 1
                     inp(k) = inputs(i, k)
                 Next
-                Dim output!() = Test(inp)
+                Dim output!() = TestOneSample(inp)
                 For j As Integer = 0 To output.GetLength(0) - 1
                     outputs(i, j) = output(j)
                 Next
             Next
-            Me.output = outputs
-            Dim outputMatrix As Matrix = outputs
-            Return outputMatrix
+            Return outputs
 
         End Function
 

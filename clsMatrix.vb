@@ -205,6 +205,24 @@ Namespace MatrixMLP
 
         End Function
 
+        Public Shared Operator +(m1 As Matrix, m2 As Matrix) As Matrix
+            Dim m1plusm2 As Matrix = m1
+            m1plusm2.Add(m2)
+            Return m1plusm2
+        End Operator
+
+        Public Shared Operator -(m1 As Matrix, m2 As Matrix) As Matrix
+            Dim m1minusm2 As Matrix = m1
+            m1minusm2.Subtract(m2)
+            Return m1minusm2
+        End Operator
+
+        Public Shared Operator *(m1 As Matrix, m2 As Matrix) As Matrix
+            Dim m1xm2 As Matrix = m1
+            m1xm2.Multiply(m2)
+            Return m1xm2
+        End Operator
+
         ''' <summary>
         ''' Add a number to each element of the array
         ''' </summary>
@@ -274,14 +292,14 @@ Namespace MatrixMLP
 
         End Function
 
-        ''' <summary>
-        ''' Subtract 2 matrices (the first as an array) and return a new matrix
-        ''' </summary>
-        Public Overloads Shared Function SubtractFromArray(a_array#(), b As Matrix) As Matrix
-            Dim a As Matrix = Matrix.FromArray(a_array)
-            Dim c As Matrix = Matrix.Subtract(a, b)
-            Return c
-        End Function
+        ' ''' <summary>
+        ' ''' Subtract 2 matrices (the first as an array) and return a new matrix
+        ' ''' </summary>
+        'Public Overloads Shared Function SubtractFromArray(a_array#(), b As Matrix) As Matrix
+        '    Dim a As Matrix = Matrix.FromArray(a_array)
+        '    Dim c As Matrix = Matrix.Subtract(a, b)
+        '    Return c
+        'End Function
 
         ''' <summary>
         ''' Subtract 2 matrices (the first as an array of Single) and return a new matrix

@@ -8,6 +8,13 @@ This is the classical XOR test.
 
 # Versions
 
+21/03/2020 V1.0.8 Functionnal tests (2)
+- MultiLayerPerceptron: Test -> TestOneSample
+- MultiLayerPerceptron: ComputeError, ComputeAverageError
+- PrintWeights(): Print weights for functionnal tests
+- XOR test: sample order changed, input and target generalized
+- Matrix: +-* operators
+
 08/03/2020 V1.0.7 Average error
 - ComputeAverageError: Compute first abs then average
 - UnitTestFramework.dll: local path
