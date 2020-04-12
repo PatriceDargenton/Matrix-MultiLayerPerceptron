@@ -25,24 +25,26 @@ Namespace MatrixMLP
 
             ' Sometimes works
             'nbIterations = 100000
-            'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.Sigmoid)
+            'p.SetActivationFunctionForMatrixForMatrix(TActivationFunctionForMatrix.Sigmoid, gain:=1, center:=0)
 
             ' Works fine
             nbIterations = 100000
-            p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.HyperbolicTangent)
+            p.SetActivationFunctionForMatrix(TActivationFunctionForMatrix.HyperbolicTangent,
+                gain:=1, center:=0)
 
             ' Works fine
             'nbIterations = 100000
-            'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.ELU)
+            'p.SetActivationFunctionForMatrix(TActivationFunctionForMatrix.ELU, gain:=1, center:=0)
 
             ' Doesn't work
             'nbIterations = 1000000
-            'p.SetActivationFunction(ActivationFunctionForMatrix.TActivationFunction.ReLU)
+            'p.SetActivationFunctionForMatrix(TActivationFunctionForMatrix.ReLU, gain:=1, center:=0)
 
-            'p.Init(inputNodes:=2, hiddenNodes:=2, outputNodes:=1, learningRate:=0.1!)
-            Dim NeuronCount = New Integer() {2, 2, 1}
-            p.InitStruct(NeuronCount, addBiasColumn:=True)
-            p.Init(learningRate:=0.1)
+            ' Doesn't work
+            'p.SetActivationFunctionForMatrix(TActivationFunctionForMatrix.ReLUSigmoid, gain:=1, center:=0)
+
+            p.InitStruct(m_neuronCountXOR, addBiasColumn:=True)
+            p.Init(learningRate:=0.1, weightAdjustment:=0.1)
 
             p.Randomize(-1, 2)
             Dim nbOutput% = 1
@@ -51,43 +53,28 @@ Namespace MatrixMLP
             Dim inputs!(,) = training.GetInputs
             Dim targets!(,) = training.GetOutputs
 
-            Dim length% = inputs.GetLength(0)
-            Dim nbInputs% = inputs.GetLength(1)
+            p.nbIterations = nbIterations
+            p.printOutput_ = True
+            p.inputArray = inputs
+            p.targetArray = targets
+            p.Train()
+            'p.Train(clsMLPGeneric.enumLearningMode.SemiStochastique)
+            'p.Train(clsMLPGeneric.enumLearningMode.Stochastique)
 
-            For i As Integer = 0 To nbIterations - 1
-                Dim r% = MultiLayerPerceptron.rng.Next(maxValue:=4) ' Stochastic learning
-
-                Dim inp!(0 To nbInputs - 1)
-                For k As Integer = 0 To nbInputs - 1
-                    inp(k) = inputs(r, k)
-                Next
-                Dim target!(0 To nbOutput - 1)
-                For k As Integer = 0 To nbOutput - 1
-                    target(k) = targets(r, k)
-                Next
-
-                p.Train(inp, target)
-
-                If i < 10 OrElse
-                   (i + 1) Mod 10000 = 0 OrElse
-                   ((i + 1) Mod 1000 = 0 AndAlso i < 10000) Then
-                    p.ComputeAverageErrorFromLastError()
-                    Dim sMsg$ = "Iteration n°" & i + 1 & "/" & nbIterations &
-                        " : average error = " & p.averageError.ToString("0.00")
-                    Console.WriteLine(sMsg)
-                    Debug.WriteLine(sMsg)
-                End If
-
-            Next
-
-            p.output = p.TestAllSamples(inputs, nbOutput)
+            p.TestAllSamples(inputs, nbOutput)
+            p.output = p.outputArray
             p.targetArray = targets
             p.ComputeAverageError()
-            Debug.WriteLine("Result matrix: " & p.output.ToString())
-            Debug.WriteLine("Average error = " & p.averageError.ToString("0.000000"))
-            Console.WriteLine("Result matrix: " & p.output.ToString())
-            Console.WriteLine("Average error = " & p.averageError.ToString("0.000000"))
 
+            ShowMessage("Result matrix: " & p.output.ToString())
+            ShowMessage("Average error = " & p.averageError.ToString("0.000000"))
+            ShowMessage("Done.")
+
+        End Sub
+
+        Private Sub ShowMessage(msg$)
+            Console.WriteLine(msg)
+            Debug.WriteLine(msg)
         End Sub
 
     End Module

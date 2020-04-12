@@ -8,6 +8,10 @@ This is the classical XOR test.
 
 # Versions
 
+12/04/2020 V1.0.9 OOP paradigm
+- Weight initialization: rounded, to reproduce functionnal tests exactly
+- Generic code: see this repositery: https://github.com/PatriceDargenton/One-Ring-to-rule-them-all
+
 21/03/2020 V1.0.8 Functionnal tests (2)
 - MultiLayerPerceptron: Test -> TestOneSample
 - MultiLayerPerceptron: ComputeError, ComputeAverageError

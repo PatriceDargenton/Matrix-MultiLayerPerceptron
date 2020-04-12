@@ -162,7 +162,9 @@ Namespace MatrixMLP
                 Sub(i)
                     Parallel.For(0, Me.Cols,
                         Sub(j)
-                            Me.data(i, j) = rng.NextDouble(minValue, maxValue)
+                            Dim r# = rng.NextDouble(minValue, maxValue)
+                            Dim rounded# = Math.Round(r, clsMLPGeneric.roundWeights)
+                            Me.data(i, j) = rounded
                         End Sub)
                 End Sub)
 
@@ -175,20 +177,11 @@ Namespace MatrixMLP
             Return ToStringWithFormat()
         End Function
 
-        Private Function ToStringWithFormat$(Optional dec$ = "0.00")
-
-            'Dim sb As New StringBuilder
-            'For i As Integer = 0 To Me.m_rows - 1
-            '    For j As Integer = 0 To Me.m_cols - 1
-            '        sb.Append(Me.data(i, j) & " ")
-            '    Next
-            '    sb.AppendLine()
-            'Next
+        Public Function ToStringWithFormat$(Optional dec$ = "0.00")
 
             Dim sb As New StringBuilder
             sb.AppendLine("{")
             For i As Integer = 0 To Me.m_rows - 1
-                'If i > 0 Then sb.Append(" ")
                 sb.Append(" {")
                 For j As Integer = 0 To Me.m_cols - 1
                     Dim strVal$ = Me.data(i, j).ToString(dec).Replace(",", ".")
@@ -291,15 +284,6 @@ Namespace MatrixMLP
             Return c
 
         End Function
-
-        ' ''' <summary>
-        ' ''' Subtract 2 matrices (the first as an array) and return a new matrix
-        ' ''' </summary>
-        'Public Overloads Shared Function SubtractFromArray(a_array#(), b As Matrix) As Matrix
-        '    Dim a As Matrix = Matrix.FromArray(a_array)
-        '    Dim c As Matrix = Matrix.Subtract(a, b)
-        '    Return c
-        'End Function
 
         ''' <summary>
         ''' Subtract 2 matrices (the first as an array of Single) and return a new matrix
@@ -431,14 +415,14 @@ Namespace MatrixMLP
                 Next
             Next
 
-            Dim rAverage# = 0
+            Dim average_# = 0
             If nbElements <= 1 Then
-                rAverage = sum
+                average_ = sum
             Else
-                rAverage = sum / nbElements
+                average_ = sum / nbElements
             End If
 
-            Return rAverage
+            Return average_
 
         End Function
 
