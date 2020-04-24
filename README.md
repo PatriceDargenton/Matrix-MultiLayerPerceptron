@@ -1,7 +1,5 @@
 # Matrix-MultiLayerPerceptron
 
-https://github.com/PatriceDargenton/Matrix-MultiLayerPerceptron
-
 Matrix Multi-Layer Perceptron in VB .NET from C# version https://github.com/nlabiris/perceptrons
 
 This is the classical XOR test.
@@ -53,5 +51,3 @@ This is the classical XOR test.
 - Compute average error
 
 31/12/2019 V1.01 Initial commit: C# -> VB .NET
-
-Patrice Dargenton.
