@@ -6,6 +6,10 @@ This is the classical XOR test.
 
 # Versions
 
+02/05/2020 V1.11
+- PrintOutput fixed
+- PrintParameters: activation function name displayed
+
 17/04/2020 V1.10
 - Print output standardized
 - Variable names simplification
