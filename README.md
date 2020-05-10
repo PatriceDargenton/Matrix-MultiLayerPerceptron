@@ -6,6 +6,10 @@ This is the classical XOR test.
 
 # Versions
 
+10/05/2020 V1.12
+- Homogenization of function names
+- clsMLPGeneric: PrintParameters: parameters added
+
 02/05/2020 V1.11
 - PrintOutput fixed
 - PrintParameters: activation function name displayed
