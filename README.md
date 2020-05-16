@@ -6,6 +6,9 @@ This is the classical XOR test.
 
 # Versions
 
+16/05/2020 V1.13
+- Tests: Assert rounded loss <= expected loss (instead of equality) to test other implementation without exactly the same loss
+
 10/05/2020 V1.12
 - Homogenization of function names
 - clsMLPGeneric: PrintParameters: parameters added
