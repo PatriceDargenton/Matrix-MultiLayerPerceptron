@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{515F597B-6339-4E1E-9803-C44B24237EC3}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>Perceptron.MatrixMLP.modMatrixMLPTest</StartupObject>
+    <StartupObject>Sub Main</StartupObject>
     <RootNamespace>Perceptron</RootNamespace>
     <AssemblyName>Matrix_MultiLayerPerceptron</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -81,11 +81,11 @@
     <Compile Include="clsRndExtension.vb" />
     <Compile Include="clsTrainData.vb" />
     <Compile Include="modActivation.vb" />
+    <Compile Include="modLinearAlgebra.vb" />
     <Compile Include="modMatrixMLPTest.vb" />
     <Compile Include="AssemblyInfo.vb" />
     <Compile Include="modMLPHelper.vb" />
     <Compile Include="modMLPTest.vb" />
-    <Compile Include="modTests.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>

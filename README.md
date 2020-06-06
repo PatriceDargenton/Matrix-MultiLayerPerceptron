@@ -6,6 +6,14 @@ This is the classical XOR test.
 
 # Versions
 
+06/06/2020 V1.14
+- Source code cleaned
+- finally weightAdjustment is not used in this implementation (only learningRate)
+- LinearAlgebra.Matrix: only for clsMLPGeneric.lastError (not used there, MultiLayerPerceptron.lastError_ as MatrixMLP.Matrix instead)
+- ComputeAverageError: in generic class
+- Tests added for semi-stochastic and stochastic learning mode
+- TrainSemiStochastic: fixed
+
 16/05/2020 V1.13
 - Tests: Assert rounded loss <= expected loss (instead of equality) to test other implementation without exactly the same loss
 
