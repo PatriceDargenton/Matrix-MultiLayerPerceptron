@@ -6,6 +6,11 @@ This is the classical XOR test.
 
 # Versions
 
+25/06/2020 V1.15
+- Matrix.ToVectorArraySingle() -> ToArraySingle()
+- clsMLPGeneric: output Matrix instead of ouput array
+- Single Matrix class: 2 times faster
+
 06/06/2020 V1.14
 - Source code cleaned
 - finally weightAdjustment is not used in this implementation (only learningRate)
