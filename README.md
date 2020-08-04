@@ -6,6 +6,13 @@ This is the classical XOR test.
 
 # Versions
 
+04/08/2020 V1.16
+- ActivationFunctionForMatrix ->
+  ActivationFunctionOptimized
+- Sigmoid and Hyperbolic Tangent (Bipolar Sigmoid) activations: optimized also with gain<>1
+- Hyperbolic Tangent (Bipolar Sigmoid) activation: input/2
+- Matrix class using Math.Net
+
 25/06/2020 V1.15
 - Matrix.ToVectorArraySingle() -> ToArraySingle()
 - clsMLPGeneric: output Matrix instead of ouput array
