@@ -1,6 +1,5 @@
 ﻿
 Imports Perceptron.Utility ' Matrix
-Imports Perceptron.clsMLPClassic ' enumLearningMode
 
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 

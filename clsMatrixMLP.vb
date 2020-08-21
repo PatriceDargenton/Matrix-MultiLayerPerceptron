@@ -105,11 +105,6 @@ Namespace MatrixMLP
             Me.lastOutputArray1DSingle = Me.output.ToArraySingle()
         End Sub
 
-        Public Overrides Sub TestOneSample(input!(), ByRef ouput!())
-            TestOneSample(input)
-            ouput = Me.lastOutputArray1DSingle
-        End Sub
-
         ''' <summary>
         ''' Propagate the input signal into the MLP
         ''' </summary>
@@ -203,20 +198,6 @@ Namespace MatrixMLP
 
         End Sub
 
-        Public Overrides Sub ComputeError()
-            ' Calculate the error: ERROR = TARGETS - OUTPUTS
-            Dim m As Matrix = Me.targetArray
-            Me.lastError = m - Me.output
-        End Sub
-
-        Public Overrides Sub ComputeAverageErrorFromLastError()
-
-            ' Compute first abs then average:
-            'Me.averageError = CSng(Matrix.Abs(Me.lastError_).Average)
-            Me.averageError = CSng(Me.lastError.Abs.Average)
-
-        End Sub
-
         Public Overrides Sub TrainSystematic(inputs!(,), targets!(,),
             Optional learningMode As enumLearningMode = enumLearningMode.Defaut)
 
@@ -248,22 +229,6 @@ Namespace MatrixMLP
             If Me.useBias Then
                 ShowMessage("Me.bias_h=" & Me.bias_h.ToString())
                 ShowMessage("Me.bias_o=" & Me.bias_o.ToString())
-            End If
-
-        End Sub
-
-        Public Overrides Sub PrintOutput(iteration%)
-
-            If ShowThisIteration(iteration) Then
-
-                Dim nbTargets = Me.targetArray.GetLength(1)
-                TestAllSamples(Me.inputArray, nbTargets)
-                ComputeAverageError()
-                Dim sMsg$ = vbLf & "Iteration n°" & iteration + 1 & "/" & nbIterations & vbLf &
-                    "Output: " & Me.output.ToString() & vbLf &
-                    "Average error: " & Me.averageError.ToString(format6Dec)
-                ShowMessage(sMsg)
-
             End If
 
         End Sub

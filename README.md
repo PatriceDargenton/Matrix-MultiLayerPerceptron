@@ -6,6 +6,11 @@ This is the classical XOR test.
 
 # Versions
 
+21/08/2020 V1.17
+- ComputeSuccess added
+- Tests added: 2 XOR and 3 XOR
+- Refactored code in clsMLPGeneric: PrintOutput(iteration%), ComputeError(), ComputeAverageErrorFromLastError(), ComputeAverageError() and TestOneSample(input!(), ByRef ouput!())
+
 04/08/2020 V1.16
 - ActivationFunctionForMatrix ->
   ActivationFunctionOptimized

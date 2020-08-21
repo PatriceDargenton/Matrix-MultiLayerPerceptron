@@ -11,11 +11,15 @@ Module modMatrixMLPTest
         Console.WriteLine("Matrix-MultiLayerPerceptron with the classical XOR test.")
         Console.WriteLine("Matrix-MLP may not converge each time, run again if not.")
         MatrixMLPTest()
+        NextTest()
+        MatrixMLPTest(nbXor:=2)
+        NextTest()
+        MatrixMLPTest(nbXor:=3)
         Console.WriteLine("Press a key to quit.")
         Console.ReadKey()
     End Sub
 
-    Public Sub MatrixMLPTest()
+    Public Sub MatrixMLPTest(Optional nbXor% = 1)
 
         Dim mlp As New MultiLayerPerceptron()
 
@@ -25,14 +29,14 @@ Module modMatrixMLPTest
         Dim nbIterations%
 
         ' Works
-        nbIterations = 100000
-        mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.Sigmoid,
-            gain:=1, center:=2)
+        nbIterations = 5000 '100000
+        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.Sigmoid,
+        '    gain:=1, center:=2)
 
         ' Sometimes works 
         'nbIterations = 100000
-        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.HyperbolicTangent,
-        '    gain:=1, center:=0)
+        mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.HyperbolicTangent,
+            gain:=2, center:=0)
         'mlp.Init(learningRate:=0.05, weightAdjustment:=0.05)
 
         ' Works
@@ -40,36 +44,68 @@ Module modMatrixMLPTest
         'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.ELU,
         '    gain:=1, center:=-2)
 
-        mlp.InitializeStruct(m_neuronCountXOR, addBiasColumn:=True)
+        mlp.nbIterations = nbIterations
+        mlp.printOutput_ = True
+        mlp.printOutputMatrix = False
+
+        If nbXor = 1 Then
+
+            'Dim nbOutput = 1
+            'Dim training As New ML_TrainingData(inputsLength:=2, targetsLength:=nbOutput)
+            'training.Create()
+            'Dim inputs!(,) = training.GetInputs
+            'Dim targets!(,) = training.GetOutputs
+
+            'mlp.inputArray = inputs
+            'mlp.targetArray = targets
+
+            mlp.InitializeStruct(m_neuronCountXOR, addBiasColumn:=True)
+            'mlp.InitializeStruct(m_neuronCountXOR231, addBiasColumn:=True)
+            ' Not implemented:
+            'mlp.InitializeStruct(m_neuronCountXOR4Layers2331, addBiasColumn:=True)
+            'mlp.InitializeStruct(m_neuronCountXOR5Layers23331, addBiasColumn:=True)
+            mlp.printOutputMatrix = True
+            mlp.inputArray = m_inputArrayXOR
+            mlp.targetArray = m_targetArrayXOR
+        ElseIf nbXor = 2 Then
+            mlp.inputArray = m_inputArray2XOR
+            mlp.targetArray = m_targetArray2XOR
+            mlp.InitializeStruct(m_neuronCount2XOR462, addBiasColumn:=True)
+        ElseIf nbXor = 3 Then
+            'mlp.nbIterations = 10000
+            mlp.inputArray = m_inputArray3XOR
+            mlp.targetArray = m_targetArray3XOR
+            mlp.InitializeStruct(m_neuronCount3XOR, addBiasColumn:=True)
+        End If
+
         mlp.Initialize(learningRate:=0.1, weightAdjustment:=0.1)
 
         mlp.Randomize(-1, 2)
         mlp.PrintWeights()
 
-        Console.WriteLine()
-        Console.WriteLine("Press a key to start.")
-        Console.ReadKey()
-        Console.WriteLine()
+        WaitForKeyToStart()
 
-        Dim nbOutput = 1
-        Dim training As New ML_TrainingData(inputsLength:=2, targetsLength:=nbOutput)
-        training.Create()
-        Dim inputs!(,) = training.GetInputs
-        Dim targets!(,) = training.GetOutputs
+        mlp.Train()
+        'mlp.Train(enumLearningMode.Stochastic)
 
-        mlp.nbIterations = nbIterations
-        mlp.printOutput_ = True
-        mlp.inputArray = inputs
-        mlp.targetArray = targets
-        'mlp.Train()
-        mlp.Train(enumLearningMode.Stochastic)
-
-        mlp.TestAllSamples(inputs, nbOutput)
-        mlp.targetArray = targets
-        mlp.ComputeAverageError()
+        'mlp.TestAllSamples(inputs, nbOutput)
+        'mlp.targetArray = targets
+        'mlp.ComputeAverageError()
 
         mlp.ShowMessage("Matrix MLP test: Done.")
 
+    End Sub
+
+    Private Sub NextTest()
+        Console.WriteLine("Press a key to continue.")
+        Console.ReadKey()
+        Console.WriteLine()
+    End Sub
+
+    Public Sub WaitForKeyToStart()
+        If Not isConsoleApp() Then Exit Sub
+        Console.WriteLine("Press a key to start.")
+        Console.ReadKey()
     End Sub
 
 End Module
