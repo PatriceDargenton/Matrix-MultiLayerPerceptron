@@ -6,6 +6,16 @@ This is the classical XOR test.
 
 # Versions
 
+20/09/2020 V1.18
+- Hyperbolic Tangent (Tanh) gain inversion: gain:=-2 -> gain:=2
+- clsMLPGeneric.Initialize: weightAdjustment optional
+- 3XOR tests added with three activation functions
+- Compute success and fails after Train()
+- Iris flower test added: https://en.wikipedia.org/wiki/Iris_flower_data_set
+- Activation function: gain and center optional
+- PrintWeights added for one XOR tests
+- PrintOutput: option force display added
+
 21/08/2020 V1.17
 - ComputeSuccess added
 - Tests added: 2 XOR and 3 XOR

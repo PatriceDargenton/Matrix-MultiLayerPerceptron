@@ -7,42 +7,52 @@ Imports Perceptron.clsMLPGeneric ' enumLearningMode
 
 Module modMatrixMLPTest
 
-    Sub Main()
-        Console.WriteLine("Matrix-MultiLayerPerceptron with the classical XOR test.")
-        Console.WriteLine("Matrix-MLP may not converge each time, run again if not.")
-        MatrixMLPTest()
+    Public Sub MatrixMLPTest()
+
+        XORTest()
         NextTest()
-        MatrixMLPTest(nbXor:=2)
-        NextTest()
-        MatrixMLPTest(nbXor:=3)
-        Console.WriteLine("Press a key to quit.")
-        Console.ReadKey()
+
+        MLPGenericIrisTest(New MatrixMLP.MultiLayerPerceptron, "Matrix MLP Iris test")
+
     End Sub
 
-    Public Sub MatrixMLPTest(Optional nbXor% = 1)
+    Public Sub XORTest()
+
+        Console.WriteLine("Matrix-MultiLayerPerceptron with the classical XOR test.")
+        Console.WriteLine("Matrix-MLP may not converge each time, run again if not.")
+
+        MatrixMLPXorTest()
+        NextTest()
+
+        MatrixMLPXorTest(nbXor:=2)
+        NextTest()
+
+        MatrixMLPXorTest(nbXor:=3)
+
+    End Sub
+
+    Public Sub MatrixMLPXorTest(Optional nbXor% = 1)
 
         Dim mlp As New MultiLayerPerceptron()
 
-        mlp.ShowMessage("Matrix MLP test")
-        mlp.ShowMessage("---------------")
+        mlp.ShowMessage("Matrix MLP Xor test")
+        mlp.ShowMessage("-------------------")
 
         Dim nbIterations%
 
         ' Works
         nbIterations = 5000 '100000
-        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.Sigmoid,
-        '    gain:=1, center:=2)
+        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.Sigmoid, center:=2)
 
         ' Sometimes works 
         'nbIterations = 100000
         mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.HyperbolicTangent,
-            gain:=2, center:=0)
+            gain:=2)
         'mlp.Init(learningRate:=0.05, weightAdjustment:=0.05)
 
         ' Works
         'nbIterations = 10000
-        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.ELU,
-        '    gain:=1, center:=-2)
+        'mlp.SetActivationFunctionOptimized(enumActivationFunctionOptimized.ELU, center:=-2)
 
         mlp.nbIterations = nbIterations
         mlp.printOutput_ = True
@@ -92,20 +102,13 @@ Module modMatrixMLPTest
         'mlp.targetArray = targets
         'mlp.ComputeAverageError()
 
-        mlp.ShowMessage("Matrix MLP test: Done.")
+        mlp.ShowMessage("Matrix MLP Xor test: Done.")
 
-    End Sub
+        If nbXor > 1 Then Exit Sub
 
-    Private Sub NextTest()
-        Console.WriteLine("Press a key to continue.")
-        Console.ReadKey()
-        Console.WriteLine()
-    End Sub
+        WaitForKeyToContinue("Press a key to print MLP weights")
+        mlp.PrintWeights()
 
-    Public Sub WaitForKeyToStart()
-        If Not isConsoleApp() Then Exit Sub
-        Console.WriteLine("Press a key to start.")
-        Console.ReadKey()
     End Sub
 
 End Module
