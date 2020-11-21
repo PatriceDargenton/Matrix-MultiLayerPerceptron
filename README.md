@@ -6,6 +6,13 @@ This is the classical XOR test.
 
 # Versions
 
+21/11/2020 V1.20
+- Iris flower prediction analog test added
+- clsMLPGeneric.GetActivationFunctionType() added with enumActivationFunctionType
+- clsMLPGeneric.RoundWeights() added
+- clsMLPGeneric.ComputeErrorOneSample(targetArray!(,)) added
+- clsMLPGeneric.ComputeAverageErrorOneSample!(targetArray!(,)) added
+
 09/10/2020 V1.19
 - Iris flower prediction test added
 - Hyperbolic Tangent (Tanh) derivative fixed
