@@ -6,6 +6,9 @@ This is the classical XOR test.
 
 # Versions
 
+06/12/2020 V1.21
+- clsMLPGeneric.InitializeStruct function
+
 21/11/2020 V1.20
 - Iris flower prediction analog test added
 - clsMLPGeneric.GetActivationFunctionType() added with enumActivationFunctionType
