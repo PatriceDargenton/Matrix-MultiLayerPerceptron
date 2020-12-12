@@ -6,6 +6,9 @@ This is the classical XOR test.
 
 # Versions
 
+12/12/2020 V1.22
+- clsMLPGeneric.averageError: Single -> Double
+
 06/12/2020 V1.21
 - clsMLPGeneric.InitializeStruct function
 
