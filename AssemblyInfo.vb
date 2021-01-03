@@ -7,11 +7,11 @@ Imports System.Runtime.InteropServices
     "Matrix-MultiLayerPerceptron in VB .NET from C# version https://github.com/nlabiris/perceptrons")> 
 <Assembly: AssemblyCompany("ORS Production")> 
 <Assembly: AssemblyProduct("Matrix-MultiLayerPerceptron")>
-<Assembly: AssemblyCopyright("Copyright © 2020 ORS Production")>
+<Assembly: AssemblyCopyright("Copyright © 2021 ORS Production")>
 <Assembly: AssemblyTrademark("Matrix-MultiLayerPerceptron")> 
 
 <Assembly: ComVisible(False)>
 <Assembly: Guid("77d46bab-520e-475b-8276-7fa006cc24d0")>
 
-<Assembly: AssemblyVersion("1.2.2.0")>
+<Assembly: AssemblyVersion("1.2.3.0")>
 
