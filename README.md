@@ -6,6 +6,9 @@ This is the classical XOR test.
 
 # Versions
 
+09/01/2021 V1.26
+- HTangent -> Tanh
+
 08/01/2021 V1.25
 - Matrix.ToArraySingle -> ToArrayOfSingle
 
