@@ -6,6 +6,10 @@ This is the classical XOR test.
 
 # Versions
 
+30/01/2021 V1.28
+- Sunspots dataset added (time series dataset)
+- clsMLPGeneric: series array (for example time series)
+
 09/01/2021 V1.27
 - clsMLPGeneric.nbHiddenNeurons -> moved to specific classes
 

@@ -89,6 +89,7 @@
     <Compile Include="clsMLPHelper.vb" />
     <Compile Include="clsRndExtension.vb" />
     <Compile Include="clsTrainData.vb" />
+    <Compile Include="Dataset\modSunspot.vb" />
     <Compile Include="modActivation.vb" />
     <Compile Include="modMatrixMLPTest.vb" />
     <Compile Include="AssemblyInfo.vb" />
