@@ -2,7 +2,7 @@
 
 Matrix Multi-Layer Perceptron in VB .NET from C# version https://github.com/nlabiris/perceptrons
 
-This is the classical XOR test.
+This is the classical XOR test, the [Iris flower](https://en.wikipedia.org/wiki/Iris_flower_data_set) test, and the [Sunspots](https://courses.cs.washington.edu/courses/cse599/01wi/admin/Assignments/nn.html) test.
 
 # Versions
 
