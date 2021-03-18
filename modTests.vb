@@ -5,7 +5,7 @@ Module modTests
 
         MatrixMLPTest()
 
-        WaitForKeyToQuit()
+        'WaitForKeyToQuit()
 
     End Sub
 
