@@ -6,6 +6,9 @@ This is the classical XOR test, the [Iris flower](https://en.wikipedia.org/wiki/
 
 # Versions
 
+15/04/2021 V1.34
+- ShowWeights moved into clsMLPGeneric
+
 10/04/2021 V1.33
 - clsMLPMatrix: standard weight initialization
 
