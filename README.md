@@ -6,6 +6,13 @@ This is the classical XOR test, the [Iris flower](https://en.wikipedia.org/wiki/
 
 # Versions
 
+14/07/2021 V1.35
+- [Mish](https://github.com/Sergio0694/NeuralNetwork.NET/issues/93) activation function added
+- Average error computing: for one sample and for all samples
+- Signed error computing added
+- clsMLPGeneric: GetMLPType MustOverride function added
+- MatrixMLP.MultiLayerPerceptron -> clsMLPMatrix
+
 15/04/2021 V1.34
 - ShowWeights moved into clsMLPGeneric
 
