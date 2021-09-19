@@ -84,7 +84,6 @@
     <Compile Include="clsMatrixHP.vb" />
     <Compile Include="clsMatrixNL.vb" />
     <Compile Include="clsMatrixMLP.vb" />
-    <Compile Include="clsMatrixMLPTest.vb" />
     <Compile Include="clsMLPGeneric.vb" />
     <Compile Include="clsMLPHelper.vb" />
     <Compile Include="clsRndExtension.vb" />

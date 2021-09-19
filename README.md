@@ -6,6 +6,9 @@ This is the classical XOR test, the [Iris flower](https://en.wikipedia.org/wiki/
 
 # Versions
 
+19/09/2021 V1.36
+- Tests moved in UnitTestMatrix project and Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll link removed
+
 14/07/2021 V1.35
 - [Mish](https://github.com/Sergio0694/NeuralNetwork.NET/issues/93) activation function added
 - Average error computing: for one sample and for all samples
